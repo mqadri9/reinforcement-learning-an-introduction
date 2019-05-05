@@ -33,10 +33,11 @@ int State::hashState(){
 			hashval = hashval * 3 + tmp;
 		}
 	}
-	return hashval;
+	return (int)hashval;
 }
 
 void State::helperIsEnd(int p) {
+	//std::cout << p;
 	if( p == 3 ) {
 		end = 1;
 		winner = 1;
@@ -51,7 +52,8 @@ void State::helperIsEnd(int p) {
 	}
 }
 
-bool State::isEnd() {
+short int State::isEnd() {
+	data.reshape({BOARD_ROWS, BOARD_COLS});
 	if(end != 0) {
 		return end;
 	}
@@ -81,9 +83,44 @@ bool State::isEnd() {
 		}
 	}
 	auto sum = xt::eval(xt::sum(xt::abs(data)));
-	helperIsEnd((int)sum(0));
-	if(end != 0 ) {
-		return end;
+	int p = (int)sum(0);
+	if (p==BOARD_SIZE) {
+		winner = 0;
+		end = 1;
 	}
 	return end;
+}
+
+void State::getNextState(const State &obj, State& nextState, int i, int symbol) {
+	nextState.data = obj.data;
+	nextState.data(i) = symbol;
+}
+
+void State::printState() {
+	int k = 0;
+	std::cout << "----------" << std::endl;
+	while (k < BOARD_ROWS) {
+		std::string out = "| ";
+		for(int i = 3*k; i<BOARD_COLS + 3*k; i++) {
+			std::string token;
+			if(data(i) == 1) {
+				token = "*";
+			}
+			else if(data(i) == -1){
+				token = "0";
+			}
+			else {
+				token = "x";
+			}
+			out += token + "| ";
+		}
+		std::cout << out << std::endl;
+		std::cout << "----------" << std::endl;
+		k++;
+	}
+}
+
+std::ostream& operator<<(std::ostream& os, const State& s){
+	    os << s.data;
+	    return os;
 }

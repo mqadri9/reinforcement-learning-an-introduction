@@ -15,27 +15,29 @@
 #include "xtensor/xcomplex.hpp"
 #include "xtensor/xbuilder.hpp"
 #include "xtensor/xtensor.hpp"
+#include <iostream>
 
 class State {
-private:
-	const int BOARD_ROWS = 3;
-	const int BOARD_COLS = 3;
-	const int BOARD_SIZE = BOARD_ROWS * BOARD_COLS;
-
 public:
 	xt::xarray<double> data;
 	int hashval;
 	short int winner;
 	short int end;
+	int BOARD_ROWS = 3;
+	int BOARD_COLS = 3;
+	int BOARD_SIZE = BOARD_ROWS * BOARD_COLS;
 
 private:
 	void helperIsEnd(int p);
 
 public:
 	State();
+	void getNextState(const State &obj, State& nextState, int i, int symbol);
 	virtual ~State();
 	int hashState();
-	bool isEnd();
+	short int isEnd();
+	void printState();
+	friend std::ostream& operator<<(std::ostream& os, const State& s);
 };
 
 
