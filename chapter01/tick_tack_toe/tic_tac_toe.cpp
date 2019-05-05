@@ -9,6 +9,9 @@
 #include <iostream>
 #include "State.h"
 #include "HumanPlayer.h"
+#include "Player.h"
+#include "Judger.cpp"
+
 using namespace std;
 
 void getAllStatesImpl(State current_state, int current_symbol, std::map <int, std::pair<State, int>>& all_states) {
@@ -17,7 +20,7 @@ void getAllStatesImpl(State current_state, int current_symbol, std::map <int, st
 		for(int i = 3*k; i<current_state.BOARD_COLS + 3*k; i++) {
 			if(current_state.data(i) == 0){
 				State newState;
-				current_state.getNextState(current_state, newState, i, current_symbol);
+				current_state.getNextState(current_state, newState, i, -1, current_symbol);
 				int newHash = newState.hashState();
 				if(all_states.find(newHash) == all_states.end()){
 					short int isEnd = newState.isEnd();
@@ -52,15 +55,11 @@ std::map <int, std::pair<State, int>> getAllStates() {
 }
 
 int main() {
-	State state;
 	auto all_states = getAllStates();
-	//std::cout << all_states.size() << std::endl;
 	HumanPlayer player1;
-	player1.symbol = 1;
-	returnAct r = player1.act();
-	std::cout << r.row << std::endl;
-	std::cout << r.column << std::endl;
-	std::cout << r.symbol << std::endl;
-
+	HumanPlayer player2;
+	Judger<HumanPlayer, HumanPlayer> j(player1, player2);
+	int winner = j.play(true, all_states);
+	std::cout << "The winner is" << winner << std::endl;
 	return 0;
 }

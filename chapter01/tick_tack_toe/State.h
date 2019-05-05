@@ -32,7 +32,7 @@ private:
 
 public:
 	State();
-	void getNextState(const State &obj, State& nextState, int i, int symbol);
+	void getNextState(const State &obj, State& nextState, int i, int j, int symbol);
 	virtual ~State();
 	int hashState();
 	short int isEnd();

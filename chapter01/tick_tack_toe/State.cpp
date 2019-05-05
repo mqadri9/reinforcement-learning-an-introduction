@@ -33,11 +33,11 @@ int State::hashState(){
 			hashval = hashval * 3 + tmp;
 		}
 	}
+	data.reshape({BOARD_ROWS, BOARD_COLS});
 	return (int)hashval;
 }
 
 void State::helperIsEnd(int p) {
-	//std::cout << p;
 	if( p == 3 ) {
 		end = 1;
 		winner = 1;
@@ -46,14 +46,9 @@ void State::helperIsEnd(int p) {
 		end = 1;
 		winner = -1;
 	}
-	else if (p==BOARD_SIZE) {
-		winner = 0;
-		end = 1;
-	}
 }
 
 short int State::isEnd() {
-	data.reshape({BOARD_ROWS, BOARD_COLS});
 	if(end != 0) {
 		return end;
 	}
@@ -91,9 +86,14 @@ short int State::isEnd() {
 	return end;
 }
 
-void State::getNextState(const State &obj, State& nextState, int i, int symbol) {
+void State::getNextState(const State &obj, State& nextState, int i, int j, int symbol) {
 	nextState.data = obj.data;
-	nextState.data(i) = symbol;
+	if(j==-1) {
+		nextState.data(i) = symbol;
+	}
+	else {
+		nextState.data(i, j) = symbol;
+	}
 }
 
 void State::printState() {

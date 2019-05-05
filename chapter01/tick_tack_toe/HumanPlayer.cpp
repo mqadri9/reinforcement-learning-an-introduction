@@ -34,7 +34,6 @@ void HumanPlayer::backup(){
 }
 
 returnAct HumanPlayer::act(){
-	state.printState();
 	char input;
 	std::cout << "Enter your position" << std::endl;
 	std::cin >> input;
@@ -54,6 +53,10 @@ returnAct HumanPlayer::act(){
 	}
 	row = index / int(state.BOARD_COLS);
 	column = index % state.BOARD_COLS;
+	if(state.data(row, column) != 0) {
+		std::cout << "Invalid Input" << std::endl;
+		act();
+	}
 	returnAct result = {row, column, symbol};
 	return result;
 }
