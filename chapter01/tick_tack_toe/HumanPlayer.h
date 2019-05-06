@@ -9,13 +9,6 @@
 #define HUMANPLAYER_H_
 #include "State.h"
 
-struct returnAct
-{
-	int row;
-	int column;
-	int symbol;
-};
-
 class HumanPlayer {
 public:
 	int symbol;
@@ -28,7 +21,7 @@ public:
 	void reset();
 	void setState(State state);
 	void setSymbol(int symbol);
-	void backup();
+	void updateEstimates();
 	returnAct act();
 };
 

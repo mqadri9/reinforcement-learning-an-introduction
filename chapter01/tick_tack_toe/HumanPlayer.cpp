@@ -29,7 +29,7 @@ void HumanPlayer::setSymbol(int newSymbol){
 	symbol = newSymbol;
 }
 
-void HumanPlayer::backup(){
+void HumanPlayer::updateEstimates(){
 
 }
 

@@ -1,10 +1,16 @@
-//============================================================================
-// Name        : tic_tac_toe.cpp
-// Author      : 
-// Version     :
-// Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
-//============================================================================
+/*###############################################################################################################
+This code was ported to c++ from python.																		#
+Original code can be found here:																				#
+https://github.com/ShangtongZhang/reinforcement-learning-an-introduction/blob/master/chapter01/tic_tac_toe.py   #
+# Copyright (C)                                                                                              	#
+# 2016 - 2018 Shangtong Zhang(zhangshangtong.cpp@gmail.com)             										#
+# 2016 Jan Hakenberg(jan.hakenberg@gmail.com)                         											#
+# 2016 Tian Jun(tianjun.cpp@gmail.com)                                											#
+# 2016 Kenta Shimada(hyperkentakun@gmail.com)                         											#
+# Permission given to modify the code as long as you keep this       											#
+# declaration at the top                                              											#
+#################################################################################################################
+*/
 
 #include <iostream>
 #include "State.h"
@@ -44,22 +50,45 @@ std::map <int, std::pair<State, int>> getAllStates() {
 	std::pair<State, int> val = {current_state, current_state.isEnd()};
 	std::pair<int, std::pair<State, int>> key_val = {current_state.hashState(), val};
 	all_states.insert(key_val);
-	/*for(std::map<int, std::pair<State, int>>::iterator it=all_states.begin(); it!=all_states.end(); it++){
-		std::cout << it->first;
-		std::cout << std::get<1>(it->second);
-		std::cout << std::get<0>(it->second);
-	}*/
 	getAllStatesImpl(current_state, current_symbol, all_states);
-
 	return all_states;
 }
 
 int main() {
 	auto all_states = getAllStates();
-	HumanPlayer player1;
+	/*HumanPlayer player1;
 	HumanPlayer player2;
 	Judger<HumanPlayer, HumanPlayer> j(player1, player2);
 	int winner = j.play(true, all_states);
-	std::cout << "The winner is" << winner << std::endl;
+	std::cout << "The winner is" << winner << std::endl; */
+	Player player(0.1 ,0.1, all_states);
+	State state;
+	State state2;
+	state2.data = {{1, 1, 0},
+					{-1, -1, 0},
+					{0,0,0}};
+
+	state2.winner = 0;
+	state2.end = 0;
+	State state3;
+	state3.data = {{1, 1, 1},
+					{-1, -1, 0},
+					{0,0,0}};
+	state3.winner = 1;
+	state3.end = 1;
+	player.states.push_back(state);
+	player.greedy.push_back(true);
+	player.states.push_back(state2);
+	player.greedy.push_back(true);
+	player.states.push_back(state3);
+	player.greedy.push_back(true);
+	//std::cout << (player.states)[0] << std::endl;
+	//std::cout << (player.greedy)[0] << std::endl;
+	player.setSymbol(1);
+	player.updateEstimates();
+	//player.reset();
+	//std::cout << "---------------------------" << std::endl;
+	//std::cout << (player.states)[0] << std::endl;
+	//std::cout << (player.greedy)[0] << std::endl;
 	return 0;
 }

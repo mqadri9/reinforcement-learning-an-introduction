@@ -17,6 +17,13 @@
 #include "xtensor/xtensor.hpp"
 #include <iostream>
 
+struct returnAct
+{
+	int row;
+	int column;
+	int symbol;
+};
+
 class State {
 public:
 	xt::xarray<double> data;
