@@ -87,6 +87,7 @@ short int State::isEnd() {
 }
 
 void State::getNextState(const State &obj, State& nextState, int i, int j, int symbol) {
+
 	nextState.data = obj.data;
 	if(j==-1) {
 		nextState.data(i) = symbol;
@@ -95,6 +96,7 @@ void State::getNextState(const State &obj, State& nextState, int i, int j, int s
 		nextState.data(i, j) = symbol;
 	}
 }
+
 
 void State::printState() {
 	int k = 0;

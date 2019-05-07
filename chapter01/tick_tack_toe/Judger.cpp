@@ -19,7 +19,6 @@ public:
 	State current_state;
 
 public:
-	Judger();
 	Judger(T p1, K p2) {
 		player1 = p1;
 		player2 = p2;
@@ -58,6 +57,8 @@ public:
 				current_player = 1;
 				res = player.act();
 			}
+			std::cout << "heerrrrr" << std::endl;
+
 			int row = res.row;
 			int column = res.column;
 			int symbol = res.symbol;
