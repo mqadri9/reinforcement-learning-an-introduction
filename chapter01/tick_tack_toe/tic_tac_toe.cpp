@@ -18,15 +18,14 @@ https://github.com/ShangtongZhang/reinforcement-learning-an-introduction/blob/ma
 #include "Player.h"
 #include "Judger.cpp"
 
-
 void train(int epochs, int print_every_n, std::map <int, std::pair<State, int>>& all_states) {
-	Player player1(0.01 ,0.01, all_states);
-	Player player2(0.01 ,0.01, all_states);
-	Judger<Player, Player> judger(player1, player2);
-	int player1_win = 0.0;
-	int player2_win = 0.0;
+	Player player1(0.01 ,0.1, all_states);
+	Player player2(0.01 ,0.1, all_states);
+	Judger<Player, Player> judger(&player1, &player2);
+	double player1_win = 0.0;
+	double player2_win = 0.0;
 	for(int i=1; i<=epochs; i++) {
-		int winner = judger.play(true, all_states);
+		int winner = judger.play(false, all_states);
 		if(winner == 1){
 			player1_win++;
 		}
@@ -42,6 +41,50 @@ void train(int epochs, int print_every_n, std::map <int, std::pair<State, int>>&
 	}
 	player1.save_policy();
 	player2.save_policy();
+}
+
+void compete(int turns, std::map <int, std::pair<State, int>>& all_states) {
+	Player player1(0 ,0, all_states);
+	Player player2(0 ,0, all_states);
+	Judger<Player, Player> judger(&player1, &player2);
+	player1.load_policy();
+	player2.load_policy();
+	double player1_win = 0.0;
+	double player2_win = 0.0;
+	for(int i=0; i<turns; i++) {
+		int winner = judger.play(false, all_states);
+		if(winner == 1){
+			player1_win++;
+		}
+		if(winner == -1){
+			player2_win++;
+		}
+		judger.reset();
+	}
+	std::cout << "Turns: " << turns << " , player 1 winrate: " <<  player1_win/turns << " , player 2 winrate: " <<  player2_win/turns << std::endl;
+}
+
+
+void play(std::map <int, std::pair<State, int>>& all_states){
+	while(true) {
+		HumanPlayer player1;
+		Player player2(0 ,0, all_states);
+		Judger<HumanPlayer, Player> judger(&player1, &player2);
+		player2.load_policy();
+		int winner = judger.play(false, all_states);
+		if(winner == player2.symbol) {
+			std::cout << player1.state.data << std::endl;
+			std::cout << " YOU LOSE " << std::endl;
+		}
+		else if(winner == player1.symbol) {
+			std::cout << player1.state.data << std::endl;
+			std::cout << " YOU WIN " << std::endl;
+		}
+		else {
+			std::cout << player1.state.data << std::endl;
+			std::cout << " YOU TIED " << std::endl;
+		}
+	}
 }
 
 void getAllStatesImpl(State current_state, int current_symbol, std::map <int, std::pair<State, int>>& all_states) {
@@ -80,49 +123,9 @@ std::map <int, std::pair<State, int>> getAllStates() {
 
 int main() {
 	auto all_states = getAllStates();
-	train(2, 1, all_states);
+	train(500000, 500, all_states);
+	compete(1000, all_states);
+	play(all_states);
 	return 0;
 }
 
-
-
-/*
- * 	HumanPlayer player1;
-	HumanPlayer player2;
-	Judger<HumanPlayer, HumanPlayer> j(player1, player2);
-	int winner = j.play(true, all_states);
-	std::cout << "The winner is" << winner << std::endl;
-	Player player(0.1 ,0.1, all_states);
-	State state;
-	State state2;
-	state2.data = {{1, -1, -1},
-					{1, 1, 0},
-					{0,0, -1}};
-
-	state2.winner = 0;
-	state2.end = 0;
-	State state3;
-	state3.data = {{1, 1, 1},
-					{-1, -1, 0},
-					{0,0,0}};
-	state3.winner = 1;
-	state3.end = 1;
-	player.states.push_back(state);
-	player.greedy.push_back(true);
-	player.states.push_back(state2);
-	player.greedy.push_back(true);
-	player.states.push_back(state3);
-	player.greedy.push_back(true);
-	std::cout << (player.states)[0] << std::endl;
-	std::cout << (player.greedy)[0] << std::endl;
-	player.setSymbol(1);
-	player.updateEstimates();
-	player.act();
-	player.save_policy();
-	player.load_policy();
-	player.reset();
-	std::cout << "---------------------------" << std::endl;
-	std::cout << (player.states)[0] << std::endl;
-	std::cout << (player.greedy)[0] << std::endl;
- *
- */

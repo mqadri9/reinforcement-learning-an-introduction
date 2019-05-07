@@ -33,7 +33,8 @@ void HumanPlayer::updateEstimates(){
 
 }
 
-returnAct HumanPlayer::act(){
+returnAct HumanPlayer::act(unsigned seed){
+	std::cout << state.data << std::endl;
 	char input;
 	std::cout << "Enter your position" << std::endl;
 	std::cin >> input;
@@ -55,7 +56,7 @@ returnAct HumanPlayer::act(){
 	column = index % state.BOARD_COLS;
 	if(state.data(row, column) != 0) {
 		std::cout << "Invalid Input" << std::endl;
-		act();
+		act(seed);
 	}
 	returnAct result = {row, column, symbol};
 	return result;

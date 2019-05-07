@@ -10,7 +10,13 @@
 #include <algorithm>    // std::random_shuffle
 #include <random>
 #include <cstdlib>
-#include <ctime>        // std::time
+
+
+struct RNG {
+    int operator() (int n) {
+        return std::rand() / (1.0 + RAND_MAX) * n;
+    }
+};
 
 Player::Player() {
 
@@ -21,7 +27,6 @@ Player::Player(double step_size, double epsilon, std::map<int, std::pair<State, 
 	this->step_size = step_size;
 	this->all_states = all_states;
 	this->symbol = NULL;
-	this->rng = std::default_random_engine {};
 }
 
 Player::~Player() {
@@ -63,16 +68,6 @@ void Player::initEstimations(int const symbol) {
 			key_val = {hash, 0.5};
 			estimations.insert(key_val);
 		}
-		/*if (hash == 10125) {
-			std::cout << "+++++++++++++++++++++hash10125" << std::endl;
-			std::cout << std::get<1>(key_val) << std::endl;
-			std::cout << state.data << std::endl;
-		}
-		if (hash == 0) {
-			std::cout << "+++++++++++++++++++++hash0" << std::endl;
-			std::cout << std::get<1>(key_val) << std::endl;
-			std::cout << state.data << std::endl;
-		}*/
 	}
 }
 
@@ -90,14 +85,11 @@ void Player::updateEstimates() {
 		trajectoryHashes.push_back((*it).hashState());
 	}
 	// start i from trajectoryHashes.size() - 2 since the first state to update is last_state - 1 (last state is constant either win, lose or draw)
-	//std::cout << trajectoryHashes.size();
 	for(int i = trajectoryHashes.size() - 2 ;  i>=0; i--) {
 		int hash = trajectoryHashes[i];
 		double last_estimate = estimations.find(trajectoryHashes[i+1]) -> second;
 		std::map<int, double>::iterator current_estimate = estimations.find(hash);
 		double td_error = greedy[i] * (last_estimate - current_estimate->second);
-		//std::cout << last_estimate << std::endl;
-		//std::cout << current_estimate->second << std::endl;
 		current_estimate->second += step_size*td_error;
 	}
 }
@@ -154,10 +146,8 @@ static bool compareActionSets(std::pair<double, std::pair<int, int>> a1, std::pa
 	return (estimate1 < estimate2);
 }
 
-returnAct Player::act() {
+returnAct Player::act(unsigned seed) {
 	State state = states[states.size() - 1];
-	//std::cout << state.data << std::endl;
-	//std::cout << "Original state" << std::endl;
 	std::vector<int> next_states;
 	std::vector<std::pair<int, int>> next_positions;
 	returnAct action;
@@ -171,8 +161,6 @@ returnAct Player::act() {
 				state.getNextState(state, newState, i, j, symbol);
 				int hash = newState.hashState();
 				next_states.push_back(hash);
-				//std::cout << newState.data << std::endl;
-				//std::cout << "i: " << i << " j: " << j << std::endl;
 			}
 		}
 	}
@@ -193,31 +181,10 @@ returnAct Player::act() {
 	for(unsigned int i=0; i<next_states.size(); i++) {
 		values.push_back({estimations.find(next_states[i]) -> second, next_positions[i]});
 	}
-	/*std::cout << "Before shuffle................" << std::endl;
-	for(std::vector<std::pair<double, std::pair<int, int>>>::iterator it=values.begin(); it!=values.end(); it++){
-		std::cout << "Estimated: " << std::get<0>(*it) << " row: " << std::get<0>(std::get<1>(*it)) << " column: " << std::get<1>(std::get<1>(*it));
-		std::cout << std::endl;
-	}*/
-	std::random_shuffle( values.begin(), values.end());
-	/*std::cout << "After shuffle................" << std::endl;
-	for(std::vector<std::pair<double, std::pair<int, int>>>::iterator it=values.begin(); it!=values.end(); it++){
-		std::cout << "Estimated: " << std::get<0>(*it) << " row: " << std::get<0>(std::get<1>(*it)) << " column: " << std::get<1>(std::get<1>(*it));
-		std::cout << std::endl;
-	}*/
 
+	std::shuffle(values.begin(), values.end(), std::default_random_engine(seed));
 	std::sort(values.begin(), values.end(), compareActionSets);
-	/*std::cout << "After sort................" << std::endl;
-	for(std::vector<std::pair<double, std::pair<int, int>>>::iterator it=values.begin(); it!=values.end(); it++){
-		std::cout << "Estimated: " << std::get<0>(*it) << " row: " << std::get<0>(std::get<1>(*it)) << " column: " << std::get<1>(std::get<1>(*it));
-		std::cout << std::endl;
-	}*/
-
 	std::reverse(values.begin(), values.end());
-	/*std::cout << "After reverse................" << std::endl;
-	for(std::vector<std::pair<double, std::pair<int, int>>>::iterator it=values.begin(); it!=values.end(); it++){
-		std::cout << "Estimated: " << std::get<0>(*it) << " row: " << std::get<0>(std::get<1>(*it)) << " column: " << std::get<1>(std::get<1>(*it));
-		std::cout << std::endl;
-	}*/
 	int row = std::get<0>(std::get<1>(values[0]));
 
 	int column = std::get<1>(std::get<1>(values[0]));
@@ -226,11 +193,4 @@ returnAct Player::act() {
 	action.symbol = symbol;
 	return action;
 }
-
-
-
-
-
-
-
 

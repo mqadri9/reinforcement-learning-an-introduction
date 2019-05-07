@@ -22,7 +22,7 @@ public:
 	void setState(State state);
 	void setSymbol(int symbol);
 	void updateEstimates();
-	returnAct act();
+	returnAct act(unsigned seed);
 };
 
 #endif /* HUMANPLAYER_H_ */

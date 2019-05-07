@@ -9,7 +9,6 @@
 #define PLAYER_H_
 #include "State.h"
 #include <vector>
-#include <random>
 
 class Player {
 public:
@@ -20,7 +19,6 @@ public:
 	std::vector<State> states;
 	std::vector<int> greedy;
 	std::map<int, std::pair<State, int>> all_states;
-	std::default_random_engine rng;
 
 public:
 	Player();
@@ -33,7 +31,7 @@ public:
 	bool save_policy();
 	bool load_policy();
 	void initEstimations(int const newSymbol);
-	returnAct act();
+	returnAct act(unsigned seed);
 };
 
 #endif /* PLAYER_H_ */
