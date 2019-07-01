@@ -236,11 +236,11 @@ int main()
 	xt::xarray<double> a = xt::random::randn<double>({10});
 	BanditParams bandit_params;
 	Plot plot;
-	//figure_2_1(plot);
-	//figure_2_2(plot);
-	//figure_2_3(plot);
-	//figure_2_4(plot);
-	//figure_2_5(plot);
+	figure_2_1(plot);
+	figure_2_2(plot);
+	figure_2_3(plot);
+	figure_2_4(plot);
+	figure_2_5(plot);
 	figure_2_6(plot);
 	return 0;
 }
