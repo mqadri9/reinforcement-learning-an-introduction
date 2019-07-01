@@ -204,7 +204,15 @@ void figure_2_6(Plot& plot, int runs=2000, int time=1000) {
 	xt::xarray<double> parameters = xt::zeros<double>({4, 7});
 	genParams(&parameters);
 	genProblems(&bandits, parameters);
+	// This returns a 2D array: 28 x 1000. Each row is a bandit problem
+	// Columns represent time steps. Each element is the average reward of bandit problem
+	// x at time y
 	retSimulate data = simulate(runs, time, bandits);
+	// rewards is a 1 D array of size 28. Each element is the mean reward across all time steps
+	// of a bandit problem. [0: 7) epsilon greedy problems
+	// [7, 14) gradient bandit
+	// [14, 21) UCB
+	// [21, 28) optimistic initialization
 	xt::xarray<double> rewards  = xt::mean(data.mean_rewards, 1);
 	plot.figure_2_6(rewards, parameters, rewards.size());
 	/*float step_sizes[4] = {0.1, 0.1, 0.4, 0.4};  4-7
