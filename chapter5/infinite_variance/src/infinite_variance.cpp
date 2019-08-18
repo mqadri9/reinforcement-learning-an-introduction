@@ -1,9 +1,13 @@
 //============================================================================
 // Name        : infinite_variance.cpp
-// Author      : 
+// Author      : Mohamad Qadri
 // Version     :
-// Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
+// Copyright (C)
+// 2016-2018 Shangtong Zhang(zhangshangtong.cpp@gmail.com)
+// 2016 Kenta Shimada(hyperkentakun@gmail.com)
+// Permission given to modify the code as long as you keep this declaration at the top
+// Description : Infinite_variance.py based on the python implementation found here:
+// https://github.com/ShangtongZhang/reinforcement-learning-an-introduction/blob/master/chapter05/infinite_variance.py
 //============================================================================
 
 #include <iostream>
